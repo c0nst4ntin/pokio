@@ -44,14 +44,14 @@ test('catch handles thrown exceptions', function () {
     $promise = async(function () {
         throw new RuntimeException('Test failure');
     })->catch(function (Throwable $e) {
-        return 'Recovered: ' . $e->getMessage();
+        return 'Recovered: '.$e->getMessage();
     });
 
     expect(await($promise))->toBe('Recovered: Test failure');
 });
 
 test('catch is not called if no exception occurs', function () {
-    $promise = async(fn() => 'ok')
+    $promise = async(fn () => 'ok')
         ->catch(function () {
             return 'should not be called';
         });
@@ -62,7 +62,7 @@ test('catch is not called if no exception occurs', function () {
 test('finally is called after successful promise', function () {
     $called = false;
 
-    $promise = async(fn() => 'done')
+    $promise = async(fn () => 'done')
         ->finally(function () use (&$called) {
             $called = true;
         });
@@ -77,10 +77,10 @@ test('finally is called after failed promise', function () {
 
     $promise = async(function () {
         throw new Exception('fail');
-    })->catch(fn() => null)
-      ->finally(function () use (&$called) {
-          $called = true;
-      });
+    })->catch(fn () => null)
+        ->finally(function () use (&$called) {
+            $called = true;
+        });
 
     await($promise);
 
@@ -91,7 +91,7 @@ test('catch allows rethrowing the exception', function () {
     $promise = async(function () {
         throw new InvalidArgumentException('Invalid');
     })->catch(function (Throwable $e) {
-        throw new RuntimeException('Wrapped: ' . $e->getMessage(), 0, $e);
+        throw new RuntimeException('Wrapped: '.$e->getMessage(), 0, $e);
     });
 
     $this->expectException(RuntimeException::class);

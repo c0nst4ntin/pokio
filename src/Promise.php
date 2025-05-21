@@ -62,10 +62,10 @@ final class Promise
     /**
      * Catches any exception thrown in the promise chain.
      *
-     * @param Closure(Throwable): mixed $onRejected
+     * @param  Closure(Throwable): mixed  $onRejected
      * @return Promise<mixed>
      */
-    public function catch(Closure $onRejected): Promise
+    public function catch(Closure $onRejected): self
     {
         return async(function () use ($onRejected) {
             try {
@@ -79,15 +79,16 @@ final class Promise
     /**
      * Executes a callback regardless of success or failure.
      *
-     * @param Closure(): void $onFinally
+     * @param  Closure(): void  $onFinally
      * @return Promise<TReturn>
      */
-    public function finally(Closure $onFinally): Promise
+    public function finally(Closure $onFinally): self
     {
         return async(function () use ($onFinally) {
             try {
                 $result = await($this);
                 $onFinally();
+
                 return $result;
             } catch (Throwable $e) {
                 $onFinally();
