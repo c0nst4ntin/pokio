@@ -6,6 +6,7 @@ namespace Pokio;
 
 use Closure;
 use Pokio\Contracts\Result;
+use Throwable;
 
 /**
  * @template TReturn
@@ -55,6 +56,43 @@ final class Promise
             $result = await($this);
 
             return $onFulfilled($result);
+        });
+    }
+
+    /**
+     * Catches any exception thrown in the promise chain.
+     *
+     * @param Closure(Throwable): mixed $onRejected
+     * @return Promise<mixed>
+     */
+    public function catch(Closure $onRejected): Promise
+    {
+        return async(function () use ($onRejected) {
+            try {
+                return await($this);
+            } catch (Throwable $th) {
+                return $onRejected($th);
+            }
+        });
+    }
+
+    /**
+     * Executes a callback regardless of success or failure.
+     *
+     * @param Closure(): void $onFinally
+     * @return Promise<TReturn>
+     */
+    public function finally(Closure $onFinally): Promise
+    {
+        return async(function () use ($onFinally) {
+            try {
+                $result = await($this);
+                $onFinally();
+                return $result;
+            } catch (Throwable $e) {
+                $onFinally();
+                throw $e;
+            }
         });
     }
 }
